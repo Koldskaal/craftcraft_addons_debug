@@ -1,0 +1,14 @@
+## Interface: 30300
+## Author: koldskaal
+## Title: TradeskillUI filter test
+## Version: 1
+## Notes: Fitler your tradeskill window
+## X-Category: Tradeskill
+## LoadOnDemand: 1
+## LoadWith: Blizzard_TradeSkillUI
+# User Interface files
+Constants.lua
+Blizzard_TradeSkillUI.lua
+Common.lua
+simpleWindow.lua
+TradeTabs.lua

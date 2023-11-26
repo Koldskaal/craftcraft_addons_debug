@@ -1,0 +1,1 @@
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh root@45.11.229.234 "cat >> .ssh/authorized_keys"

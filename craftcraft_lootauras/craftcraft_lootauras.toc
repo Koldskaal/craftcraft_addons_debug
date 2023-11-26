@@ -1,0 +1,7 @@
+## Interface: 30300
+## Version: 1.0.0
+## Title: Loot|cffff6666Auras|r
+## Notes: Helper addon for loot auras
+## Author: Aviv
+
+lootauras.lua
