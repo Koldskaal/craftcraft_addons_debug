@@ -398,12 +398,11 @@ function MainPanel:ToggleState()
 
     if self.is_expanded then
         TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
-        TradeSkillFrame:SetAttribute("UIPanelLayout-width", 695 + 311) --orig 384
-        TradeSkillFrame:SetWidth(695 + 311)
-
+        self:SetAttribute("UIPanelLayout-width", 695 + 311) --orig 384
+        self:SetWidth(695 + 311)
         --Move the exit button to bottom left
         TradeSkillCancelButton:ClearAllPoints()
-        TradeSkillCancelButton:SetPoint("CENTER", TradeSkillFrame, "TOPLEFT", 613 + 311, -422)
+        TradeSkillCancelButton:SetPoint("CENTER", self, "TOPLEFT", 613 + 311, -422)
         MainPanel.topTex:Show()
         MainPanel.botTex:Show()
         MainPanel.filter_menu:Show()
@@ -411,16 +410,34 @@ function MainPanel:ToggleState()
         TradeSkillSubClassDropDown:Show()
     else
         TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
-        TradeSkillFrame:SetAttribute("UIPanelLayout-width", 384 + 311) --orig 384
+        self:SetAttribute("UIPanelLayout-width", 384 + 311) --orig 384
 
-        TradeSkillFrame:SetWidth(384 + 311)
+        self:SetWidth(384 + 311)
         -- MainPanel.botTex:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
         MainPanel.topTex:Hide()
         MainPanel.botTex:Hide()
         MainPanel.filter_menu:Hide()
         TradeSkillCancelButton:ClearAllPoints()
-        TradeSkillCancelButton:SetPoint("CENTER", TradeSkillFrame, "TOPLEFT", 305 + 311, -422)
+        TradeSkillCancelButton:SetPoint("CENTER", self, "TOPLEFT", 305 + 311, -422)
         TradeSkillInvSlotDropDown:Hide()
         TradeSkillSubClassDropDown:Hide()
     end
 end
+
+local shown = false
+function MainPanel.OnEvent(self, event, ...)
+    if (event == "PLAYER_ENTER_COMBAT") then
+        shown = MainPanel:IsShown();
+        MainPanel:Hide();
+    end
+    if (event == "PLAYER_LEAVE_COMBAT") then
+        if (shown) then
+            MainPanel:Show();
+        end
+    end
+end
+
+MainPanel:RegisterEvent("PLAYER_ENTER_COMBAT")
+MainPanel:RegisterEvent("PLAYER_LEAVE_COMBAT")
+-- MainPanel:SetScript("OnEvent", MainPanel.OnEvent)
+-- MainPanel:HookScript("OnShow", function() if InCombatLockdown() then MainPanel:Hide() end end);
