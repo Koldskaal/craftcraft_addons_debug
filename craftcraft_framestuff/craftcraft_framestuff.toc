@@ -7,4 +7,4 @@
 GlobalStrings.lua
 PaperDollFrame.lua
 PetPaperDollFrame.lua
-SpellBookFrame.lua
+# SpellBookFrame.lua
