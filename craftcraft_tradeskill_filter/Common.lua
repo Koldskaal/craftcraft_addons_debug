@@ -295,4 +295,48 @@ do
 
 		return editbox
 	end
+
+	function ns:ApplyDoublePanelTextures(frame)
+		frame:SetAttribute("UIPanelLayout-width", 695) --orig 384
+		frame:SetWidth(695)
+
+		--Add the mid section by messing with glue and newspaper clippings
+		local function CreateTex(parent, tex, layer, width, height, ...)
+			local texf = parent:CreateTexture(nil, layer)
+			texf:SetPoint(...)
+			texf:SetTexture(tex)
+			texf:SetWidth(width); texf:SetHeight(height)
+			return texf
+		end
+
+		--for these textures we need to fill 311 pixels
+		--Top filling in
+		local top1 = CreateTex(frame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\Top]], "BORDER",
+			311, 256,
+			"TOPLEFT",
+			256, 0)
+		local bot1 = CreateTex(frame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\Bot]],
+			"BORDER",
+			311, 256,
+			"BOTTOMLEFT", frame:GetName() .. "BottomLeftTexture", "BOTTOMRIGHT")
+
+
+		local top = CreateTex(frame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\Top]], "BORDER",
+			311, 256,
+			"TOPLEFT",
+			top1, "TOPRIGHT")
+		frame.topTex = top
+		top:Hide()
+
+		--bottom filling in
+		local bot = CreateTex(frame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\InspectBot]],
+			"BORDER",
+			311, 256,
+			"BOTTOMLEFT", bot1, "BOTTOMRIGHT", 0, 0)
+		bot:Hide()
+		frame.botTex = bot
+		frame.botinnerTex = bot1
+
+		_G[frame:GetName() .. "BottomRightTexture"]:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
+	end
 end -- do

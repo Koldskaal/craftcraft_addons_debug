@@ -11,7 +11,7 @@ local SetTooltipScripts   = ns.SetTooltipScripts
 
 local MainPanel = TradeSkillFrame
 
-function MainPanel:FiterInit()
+function MainPanel:FilterInit()
     local FilterPanel = CreateFrame("Frame", nil, MainPanel)
     FilterPanel:SetWidth(300)
     FilterPanel:SetHeight(290)
@@ -196,7 +196,7 @@ end
 do                                                           -- intialization of expansion frame
     TradeSkillFrame:SetAttribute("UIPanelLayout-width", 695) --orig 384
     TradeSkillFrame:SetWidth(695)
-
+    ns:ApplyDoublePanelTextures(TradeSkillFrame)
     -- Move the skill rank string
 
     TradeSkillRankFrameSkillRank:ClearAllPoints()
@@ -216,6 +216,7 @@ do                                                           -- intialization of
     TradeSkillFrameEditBox:ClearAllPoints()
     TradeSkillFrameEditBox:SetPoint("TOPLEFT", 77, -72)
     TradeSkillFrameEditBox:SetWidth(150)
+
     --Add a reset button to the editbox
     local resbutton = CreateFrame("Button", "TradeSkillFrameEditBoxResetButton", TradeSkillFrameEditBox)
     resbutton:SetWidth(38); resbutton:SetHeight(38)
@@ -231,6 +232,8 @@ do                                                           -- intialization of
     end)
     resbutton:SetPoint("LEFT", TradeSkillFrameEditBox, "RIGHT", -5, -2)
 
+
+    -- filter_toggle button
     local filter_toggle = GenericCreateButton(nil, TradeSkillFrame, 24, 24, nil, nil,
         nil,
         "Filter", 2)
@@ -297,8 +300,6 @@ do                                                           -- intialization of
     TradeSkillListScrollFrame:SetPoint("TOPLEFT", 22, -96)
     TradeSkillListScrollFrame:SetHeight(310)
 
-
-
     --The stuff which shows reagents and what produced
     TradeSkillDetailScrollFrame:ClearAllPoints();
     TradeSkillDetailScrollFrame:SetPoint("TOPLEFT", TradeSkillListScrollFrame, "TOPRIGHT", 35, -2)
@@ -318,7 +319,6 @@ do                                                           -- intialization of
         end
     end
 
-
     --Add the mid section by messing with glue and newspaper clippings
     local function CreateTex(parent, tex, layer, width, height, ...)
         local texf = parent:CreateTexture(nil, layer)
@@ -333,57 +333,11 @@ do                                                           -- intialization of
         97.4,
         "LEFT", TradeSkillListScrollFrame, "RIGHT", -3, 0):SetTexCoord(0, 0.46875, 0.2, 0.9609375)
 
-    --for these textures we need to fill 311 pixels
-    --Top filling in
-    local top1 = CreateTex(TradeSkillFrame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\Top]], "BORDER",
-        311, 256,
-        "TOPLEFT",
-        256, 0)
-    local bot1 = CreateTex(TradeSkillFrame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\Bot]],
-        "BORDER",
-        311, 256,
-        "BOTTOMLEFT", TradeSkillFrameBottomLeftTexture, "BOTTOMRIGHT")
+    MainPanel:FilterInit()
 
-
-    local top = CreateTex(TradeSkillFrame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\Top]], "BORDER",
-        311, 256,
-        "TOPLEFT",
-        top1, "TOPRIGHT")
-    MainPanel.topTex = top
-    top:Hide()
-
-    --bottom filling in
-    local bot = CreateTex(TradeSkillFrame, [[Interface\AddOns\CraftCraft_tradeskill_filter\Textures\Bot]],
-        "BORDER",
-        311, 256,
-        "BOTTOMLEFT", bot1, "BOTTOMRIGHT", 0, 0)
-    bot:Hide()
-    MainPanel.botTex = bot
-    MainPanel.botinnerTex = bot1
-
-    TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
-
-    MainPanel:FiterInit()
-
-    local orig = TradeSkillFrame_SetSelection
-    local function SetSelectionHelper(...)
-        if IsTradeSkillLinked() then
-            bot:SetTexture([[Interface\AddOns\DoubleWideProfession\Textures\InspectBot]])
-        else
-            if (MainPanel.is_expanded) then
-                bot:SetTexture([[Interface\AddOns\DoubleWideProfession\Textures\InspectBot]])
-                TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
-            else
-                bot:SetTexture([[Interface\AddOns\DoubleWideProfession\Textures\InspectBot]])
-                TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
-            end
-        end
-        return ...
-    end
-
-    function TradeSkillFrame_SetSelection(...)
-        return SetSelectionHelper(orig(...))
-    end
+    hooksecurefunc("TradeSkillFrame_SetSelection", function()
+        TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
+    end)
 end -- do block
 
 MainPanel.is_expanded = false
@@ -397,7 +351,7 @@ function MainPanel:ToggleState()
     self.is_expanded = not self.is_expanded
 
     if self.is_expanded then
-        TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
+        -- TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
         self:SetAttribute("UIPanelLayout-width", 695 + 311) --orig 384
         self:SetWidth(695 + 311)
         --Move the exit button to bottom left
@@ -409,7 +363,7 @@ function MainPanel:ToggleState()
         TradeSkillInvSlotDropDown:Show()
         TradeSkillSubClassDropDown:Show()
     else
-        TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
+        -- TradeSkillFrameBottomRightTexture:SetTexture([[Interface\PaperDollInfoFrame\SkillFrame-BotRight]])
         self:SetAttribute("UIPanelLayout-width", 384 + 311) --orig 384
 
         self:SetWidth(384 + 311)
