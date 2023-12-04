@@ -1,0 +1,190 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+	<Script>
+		LoadAddOn("Blizzard_ItemSocketingUI")
+	</Script>
+	<Frame name="CCUpgradeTabFrame" enableMouse="false" toplevel="true" parent="ItemSocketingFrame"
+		frameStrata="HIGH">
+		<Size>
+			<AbsDimension x="384" y="512" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="0" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button
+				name="CCUpgradeTabFrameTab1" inherits="CharacterFrameTabButtonTemplate" id="1"
+				text="Sockets">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="11" y="46" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PanelTemplates_SetTab(CCUpgradeTabFrame, 1);
+						PlaySound("igCharacterInfoTab")
+						CCUpgradeFrame:Hide();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button
+				name="CCUpgradeTabFrameTab2" inherits="CharacterFrameTabButtonTemplate" id="2"
+				text="Tempering">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="CCUpgradeTabFrameTab1" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="-15" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
+						PlaySound("igCharacterInfoTab")
+						CCUpgradeFrame:Show();
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+
+
+		<Scripts>
+			<OnLoad>
+
+			</OnLoad>
+			<OnShow>
+				PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
+			</OnShow>
+		</Scripts>
+	</Frame>
+
+	<Frame name="CCUpgradeFrame" enableMouse="true" toplevel="true" parent="ItemSocketingFrame"
+		hidden="true"
+	>
+		<Size>
+			<AbsDimension x="384" y="512" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="-3" y="0" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<HitRectInsets>
+			<AbsInset left="0" right="30" top="0" bottom="45" />
+		</HitRectInsets>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="CCUpgradeFramePortrait">
+					<Size>
+						<AbsDimension x="60" y="60" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="10" y="-6" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture name="CCUpgradeFrameTopLeftTexture"
+					file="Interface\PaperDollInfoFrame\UI-Character-General-TopLeft">
+					<Size>
+						<AbsDimension x="256" y="256" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="2" y="-1" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="CCUpgradeFrameTopRightTexture"
+					file="Interface\PaperDollInfoFrame\UI-Character-General-TopRight">
+					<Size>
+						<AbsDimension x="128" y="256" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="2" y="-1" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="CCUpgradeFrameBottomLeftTexture"
+					file="Interface\PaperDollInfoFrame\UI-Character-General-BottomLeft">
+					<Size>
+						<AbsDimension x="256" y="256" />
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="2" y="-1" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="CCUpgradeFrameBottomRightTexture"
+					file="Interface\PaperDollInfoFrame\UI-Character-General-BottomRight">
+					<Size>
+						<AbsDimension x="128" y="256" />
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="2" y="-1" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString name="CCUpgradeFrameTitleText" inherits="GameFontNormal"
+					text="Temper item">
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-18" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="CCUpgradeFrameCloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOPRIGHT">
+						<Offset x="-44" y="-25" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Frame name="CCUpgradeFrameStatusFrame" hidden="false">
+				<Size x="264" y="20" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="CCUpgradeFrame">
+						<Offset>
+							<AbsDimension x="75" y="-46" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+
+
+		</Frames>
+	</Frame>
+
+
+</Ui>

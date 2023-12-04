@@ -1,0 +1,8 @@
+## Interface: 30300
+## Author: koldskaal
+## Title: Upgrade Items UI
+## Version: 1
+## Notes: UI to upgrade items
+# User Interface files
+upgradeui.xml
+core.lua
