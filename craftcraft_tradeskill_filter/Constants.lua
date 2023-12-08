@@ -100,7 +100,11 @@ ns.item_stats          = {
 		section =
 		"ITEM_MOD_HIT_TAKEN_MELEE_RATING_SHORT"
 	},
-	{ tt = ITEM_MOD_HIT_RATING_SHORT, text = "Hit", section = "ITEM_MOD_HIT_RATING_SHORT" },
+	{ tt = ITEM_MOD_HIT_RATING_SHORT,           text = "Hit",     section = "ITEM_MOD_HIT_RATING_SHORT" },
+	{ tt = ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, text = "Defense", section = "ITEM_MOD_DEFENSE_SKILL_RATING" },
+	{ tt = ITEM_MOD_DODGE_RATING_SHORT,         text = "Dodge",   section = "ITEM_MOD_DODGE_RATING" },
+	{ tt = ITEM_MOD_PARRY_RATING_SHORT,         text = "Parry",   section = "ITEM_MOD_PARRY_RATING" },
+	{ tt = ITEM_MOD_BLOCK_RATING_SHORT,         text = "Block",   section = "ITEM_MOD_BLOCK_RATING" },
 }
 -------------------------------------------------------------------------------
 -- Colors.

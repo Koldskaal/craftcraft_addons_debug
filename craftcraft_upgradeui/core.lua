@@ -6,22 +6,7 @@ local slotID
 
 function MainFrame:CreateUI()
     -- Create the main frame
-    -- self:SetSize(200, 200)
     self:SetPoint("TOP", ItemSocketingFrame)
-    -- self:SetAllPoints()
-    -- self:SetBackdrop({
-    --     bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-    --     edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-    --     tile = true,
-    --     tileSize = 16,
-    --     edgeSize = 16,
-    --     insets = { left = 4, right = 4, top = 4, bottom = 4 }
-    -- })
-    self:SetMovable(true)
-    -- self:EnableMouse(true)
-    self:RegisterForDrag("LeftButton")
-    -- self:SetScript("OnDragStart", self.StartMoving)
-    -- self:SetScript("OnDragStop", self.StopMovingOrSizing)
 
     -- Create the item slot
     local itemSlot = CreateFrame("Button", "MySingleItemAddonItemSlot", self)
@@ -32,9 +17,7 @@ function MainFrame:CreateUI()
     itemSlot:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     local texture = itemSlot:CreateTexture([["Interface\Buttons\ButtonHilight-Square"]], "ARTWORK")
     texture:SetAllPoints() -- Set the texture size to match the button size
-    -- -- itemSlot:SetPushedTexture([["Interface\Buttons\ButtonHilight-Square"]], "ARTWORK")
     itemSlot:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ARTWORK")
-    -- itemSlot:SetNormalTexture("Interface\\Buttons\\UI-ActionButton-Border")
     local b = itemSlot:CreateTexture(nil, 'BACKGROUND')
     b:SetWidth(90)
     b:SetHeight(90)
