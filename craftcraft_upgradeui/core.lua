@@ -123,7 +123,12 @@ function MainFrame:CreateUI()
         else
             info = GetContainerItemLink(itemSlot.bagID, itemSlot.slotID)
         end
-        -- if (info == itemSlot.link and not force) then return end
+
+
+        if (not info) then
+            HideUIPanel(ItemSocketingFrame);
+            return
+        end
         itemSlot.link = info
         -- print(itemSlot.bagID, itemSlot.slotID)
 
