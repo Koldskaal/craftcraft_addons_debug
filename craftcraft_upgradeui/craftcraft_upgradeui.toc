@@ -5,4 +5,5 @@
 ## Notes: UI to upgrade items
 # User Interface files
 upgradeui.xml
+Common.lua
 core.lua

@@ -3,6 +3,26 @@
 	<Script>
 		LoadAddOn("Blizzard_ItemSocketingUI")
 	</Script>
+	<Button name="TradeSkillItemTemplate" inherits="QuestItemTemplate" virtual="true">
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
+				GameTooltip:SetHyperlink("item:" .. self:GetID() .. ":0:0:0:0:0:0:0");
+				CursorUpdate(self);
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+				ResetCursor();
+			</OnLeave>
+			<OnUpdate>
+				CursorOnUpdate(self, elapsed);
+			</OnUpdate>
+			<OnClick>
+				local link = select(2,GetItemInfo(self:GetID()));
+				HandleModifiedItemClick(link);
+			</OnClick>
+		</Scripts>
+	</Button>
 	<Frame name="CCUpgradeTabFrame" enableMouse="false" toplevel="true" parent="ItemSocketingFrame"
 		frameStrata="HIGH">
 		<Size>
@@ -149,6 +169,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
+
 			</Layer>
 			<Layer level="OVERLAY">
 				<FontString name="CCUpgradeFrameTitleText" inherits="GameFontNormal"
@@ -161,6 +182,36 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="TradeSkillHorizontalBarLeft"
+					file="Interface\ClassTrainerFrame\UI-ClassTrainer-HorizontalBar">
+					<Size>
+						<AbsDimension x="256" y="16" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="15" y="-211" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="1.0" top="0" bottom="0.25" />
+				</Texture>
+				<Texture file="Interface\ClassTrainerFrame\UI-ClassTrainer-HorizontalBar">
+					<Size>
+						<AbsDimension x="75" y="16" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="TradeSkillHorizontalBarLeft"
+							relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="0" y="0" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.29296875" top="0.25" bottom="0.5" />
+				</Texture>
 			</Layer>
 		</Layers>
 		<Frames>
@@ -181,7 +232,302 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
+			<ScrollFrame name="CCUpgradeScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="259" y="200" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="32" y="-89" />
+					</Anchor>
+				</Anchors>
+				<!-- <Layers>
+					<Layer level="ARTWORK">
+						<Texture name="$parentTop"
+							file="Interface\ItemSocketingFrame\UI-ItemSocketingFrame-ScrollBar">
+							<Size>
+								<AbsDimension x="29" y="256" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOP" />
+							</Anchors>
+							<TexCoords left="0" right="0.46875" top="0" bottom="1" />
+						</Texture>
+						<Texture name="$parentBottom"
+							file="Interface\ItemSocketingFrame\UI-ItemSocketingFrame-ScrollBar">
+							<Size>
+								<AbsDimension x="29" y="5" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentTop"
+									relativePoint="BOTTOMLEFT">
+									<Offset>
+										<AbsDimension x="0" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.53125" right="1" top="0" bottom="0.01953125" />
+						</Texture>
+					</Layer>
+				</Layers> -->
+				<Scripts>
+					<OnLoad>
+						self.scrollBarHideable = 1;
+						ScrollFrame_OnLoad(self);
+						ScrollFrame_OnScrollRangeChanged(self, 0, 0);
+					</OnLoad>
+					<OnScrollRangeChanged>
+						ScrollFrame_OnScrollRangeChanged(self, 0, yrange);
+						ItemSocketingSocketButton_OnScrollRangeChanged(self);
+					</OnScrollRangeChanged>
+				</Scripts>
+				<ScrollChild>
+					<Frame name="CCUpgradeScrollChild">
+						<Size>
+							<AbsDimension x="269" y="140" />
+						</Size>
+						<Frames>
+							<!-- <GameTooltip name="CCUpgradeDescription"
+							inherits="GameTooltipTemplate"
+								setAllPoints="true" hidden="false">
+								<Scripts>
+									<OnLoad>
+										self:SetBackdrop(nil);
+									</OnLoad>
+								</Scripts>
+							</GameTooltip> -->
+							<!-- <GameTooltip name="CCUpgradeDescription2"
+							inherits="GameTooltipTemplate"
+								setAllPoints="false" hidden="false">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="CCUpgradeDescription"
+										relativePoint="BOTTOMLEFT" />
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										self:SetBackdrop(nil);
+									</OnLoad>
+								</Scripts>
+							</GameTooltip> -->
+						</Frames>
+					</Frame>
+				</ScrollChild>
+			</ScrollFrame>
+			<Button name="CCUpgradeDecrementButton">
+				<Size>
+					<AbsDimension x="23" y="22" />
+				</Size>
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="CCUpgradeFrame"
+						relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-200" y="91" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CCUpgradeFrameDecrement_OnClick();
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight"
+					alphaMode="ADD" />
+			</Button>
+			<Frame name="CCUpgradeAmount">
+				<Size>
+					<AbsDimension x="30" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="CCUpgradeDecrementButton"
+						relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="4" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeft"
+							file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="8" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="-5" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.0625" top="0" bottom="0.625" />
+						</Texture>
+						<Texture name="$parentRight"
+							file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="8" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="RIGHT">
+									<Offset>
+										<AbsDimension x="0" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.9375" right="1.0" top="0" bottom="0.625" />
+						</Texture>
+						<Texture name="$parentMiddle"
+							file="Interface\Common\Common-Input-Border">
+							<Size>
+								<AbsDimension x="10" y="20" />
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentLeft"
+									relativePoint="RIGHT" />
+								<Anchor point="RIGHT" relativeTo="$parentRight"
+									relativePoint="LEFT" />
+							</Anchors>
+							<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<!-- <FontString inherits="ChatFontNormal">
+					<Size>
+						<AbsDimension x="30" y="20" />
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<Text>My Label Text</Text>
+				</FontString> -->
+			</Frame>
+			<Button name="CCUpgradeIncrementButton">
+				<Size>
+					<AbsDimension x="23" y="22" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="CCUpgradeAmount"
+						relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CCUpgradeFrameIncrement_OnClick();
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down" />
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight"
+					alphaMode="ADD" />
+			</Button>
+			<Frame name="CCUpgradeMatsFrame">
+				<Size>
+					<AbsDimension x="297" y="176" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="30" y="-234" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
 
+					<Button name="CCUpgradeMatsReagent1" inherits="TradeSkillItemTemplate"
+						id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="5" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="CCUpgradeMatsReagent2" inherits="TradeSkillItemTemplate"
+						id="2">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="CCUpgradeMatsReagent1"
+								relativePoint="RIGHT">
+								<Offset>
+									<AbsDimension x="0" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="CCUpgradeMatsReagent3" inherits="TradeSkillItemTemplate"
+						id="3">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="CCUpgradeMatsReagent1"
+								relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-2" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="CCUpgradeMatsReagent4" inherits="TradeSkillItemTemplate"
+						id="4">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="CCUpgradeMatsReagent3"
+								relativePoint="RIGHT">
+								<Offset>
+									<AbsDimension x="0" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="CCUpgradeMatsReagent5" inherits="TradeSkillItemTemplate"
+						id="5">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="CCUpgradeMatsReagent3"
+								relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-2" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="CCUpgradeMatsReagent6" inherits="TradeSkillItemTemplate"
+						id="6">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="CCUpgradeMatsReagent5"
+								relativePoint="RIGHT">
+								<Offset>
+									<AbsDimension x="0" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="CCUpgradeMatsReagent7" inherits="TradeSkillItemTemplate"
+						id="7">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="CCUpgradeMatsReagent5"
+								relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-2" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="CCUpgradeMatsReagent8" inherits="TradeSkillItemTemplate"
+						id="8">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="CCUpgradeMatsReagent7"
+								relativePoint="RIGHT">
+								<Offset>
+									<AbsDimension x="0" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
 
 		</Frames>
 	</Frame>
