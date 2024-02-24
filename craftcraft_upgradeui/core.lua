@@ -1,8 +1,8 @@
 local AddonName, Addon = ...
 local MainFrame = CCUpgradeFrame
 Addon.spellID = 100012
-local bagID
-local slotID
+Addon.bagID = nil
+Addon.slotID = nil
 local shouldShow = false
 local MAX_REAGENT_NUM = 8
 local upgradeamount = 1
@@ -90,8 +90,8 @@ function MainFrame:CreateUI()
             end
             -- An item is being dragged onto the item slot
             -- print("Item dragged into the item slot:", info)
-            itemSlot.bagID = bagID
-            itemSlot.slotID = slotID
+            itemSlot.bagID = Addon.bagID
+            itemSlot.slotID = Addon.slotID
             itemSlot.link = info
             -- print(itemSlot.link)
             -- print(itemSlot.bagID, itemSlot.slotID)
@@ -207,7 +207,7 @@ function MainFrame:CreateUI()
     end)
     self.upgradeButton = upgradeButton
 
-    PanelTemplates_SetNumTabs(CCUpgradeTabFrame, 2);
+    PanelTemplates_SetNumTabs(CCUpgradeTabFrame, 3);
     PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
 
     CCUpgradeFrameCloseButton:SetScript("OnClick", function() HideUIPanel(ItemSocketingFrame); end)
@@ -332,18 +332,18 @@ end
 
 function HooksSetup()
     hooksecurefunc('ContainerFrameItemButton_OnClick', function(frame)
-        bagID = frame:GetParent():GetID()
-        slotID = frame:GetID()
+        Addon.bagID = frame:GetParent():GetID()
+        Addon.slotID = frame:GetID()
     end)
 
     hooksecurefunc('ContainerFrameItemButton_OnDrag', function(frame)
-        bagID = frame:GetParent():GetID()
-        slotID = frame:GetID()
+        Addon.bagID = frame:GetParent():GetID()
+        Addon.slotID = frame:GetID()
     end)
 
     hooksecurefunc('PaperDollItemSlotButton_OnClick', function(frame)
-        bagID = 255
-        slotID = frame:GetID()
+        Addon.bagID = 255
+        Addon.slotID = frame:GetID()
     end)
     ITEM_SOCKETABLE = ""
     GameTooltip:HookScript("OnTooltipSetItem", function(self)
@@ -360,17 +360,17 @@ function HooksSetup()
     local old_ContainerFrameItemButton_OnModifiedClick = ContainerFrameItemButton_OnModifiedClick
     function ContainerFrameItemButton_OnModifiedClick(frame, button)
         if IsShiftKeyDown() and button == "RightButton" then
-            bagID = frame:GetParent():GetID()
-            slotID = frame:GetID()
-            if (not GetContainerItemInfo(bagID, slotID)) then return end
-            local _, _, _, _, _, itemType = GetItemInfo(select(7, GetContainerItemInfo(bagID, slotID)))
+            Addon.bagID = frame:GetParent():GetID()
+            Addon.slotID = frame:GetID()
+            if (not GetContainerItemInfo(Addon.bagID, Addon.slotID)) then return end
+            local _, _, _, _, _, itemType = GetItemInfo(select(7, GetContainerItemInfo(Addon.bagID, Addon.slotID)))
             if (not (itemType == "Armor" or itemType == "Weapon")) then
                 return
             end
             CloseSocketInfo()
             ItemSocketingFrame_Update();
 
-            SocketContainerItem(bagID, slotID);
+            SocketContainerItem(Addon.bagID, Addon.slotID);
             if not GetSocketItemInfo() then
                 PanelTemplates_DisableTab(CCUpgradeTabFrame, 1)
             else
@@ -385,10 +385,10 @@ function HooksSetup()
             PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
             MainFrame:Show()
             upgradeamount = 1;
-            PickupContainerItem(bagID, slotID);
+            PickupContainerItem(Addon.bagID, Addon.slotID);
 
             MainFrame.itemSlot:Click("LeftButton");
-            SocketContainerItem(bagID, slotID);
+            SocketContainerItem(Addon.bagID, Addon.slotID);
             UpdageUpgradeAmount();
             return
         end
@@ -398,9 +398,9 @@ function HooksSetup()
     local old_PaperDollItemSlotButton_OnModifiedClick = PaperDollItemSlotButton_OnModifiedClick
     function PaperDollItemSlotButton_OnModifiedClick(frame, button)
         if IsShiftKeyDown() and button == "RightButton" then
-            bagID = 255
-            slotID = frame:GetID()
-            if (not GetInventoryItemID("player", slotID)) then return end
+            Addon.bagID = 255
+            Addon.slotID = frame:GetID()
+            if (not GetInventoryItemID("player", Addon.slotID)) then return end
 
             CloseSocketInfo()
             ItemSocketingFrame_Update();

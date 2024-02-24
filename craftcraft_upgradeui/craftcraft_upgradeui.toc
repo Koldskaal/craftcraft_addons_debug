@@ -7,3 +7,4 @@
 upgradeui.xml
 Common.lua
 core.lua
+random_enchants.lua
