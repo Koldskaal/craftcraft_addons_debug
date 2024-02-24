@@ -227,7 +227,7 @@ function MainFrame:SetReagents()
     end
 
     -- Reagents
-    local mats = GenerateMaterialRequirements(itemID, ilvl, q, ITEM_INVTYPE_IDS[invtype], target_ilvl)
+    local mats = GenerateMaterialRequirements(iname, ilvl, q, ITEM_INVTYPE_IDS[invtype], target_ilvl)
 
     -- extra ones for testing
     -- table.insert(mats, { material = mats[1].material, count = mats[1].count })
