@@ -723,6 +723,59 @@
 					</Anchor>
 				</Anchors>
 			</Button>
+
+			<StatusBar name="$parentDurability" drawLayer="BACKGROUND" minValue="0" maxValue="100"
+				defaultValue="0" enableMouse="false">
+				<Size>
+					<AbsDimension x="265" y="10" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="75" y="-50" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontHighlightSmall"
+							justifyH="CENTER">
+							<Size>
+								<AbsDimension x="0" y="9" />
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="0" y="1" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<Texture name="$parentBorder"
+							file="Interface\PaperDollInfoFrame\UI-Character-Skills-BarBorder">
+							<Size>
+								<AbsDimension x="274" y="27" />
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT">
+									<Offset>
+										<AbsDimension x="-5" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentBackground">
+							<Color r="1.0" g="1.0" b="1.0" a="0.2" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<BarTexture name="$parentBar"
+					file="Interface\PaperDollInfoFrame\UI-Character-Skills-Bar" />
+				<BarColor r="0.25" g="0.25" b="0.75" />
+			</StatusBar>
+
 			<Frame name="$parentSection1" inherits="CCREnchantSectionTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="$parent" y="-100" x="-10" />
