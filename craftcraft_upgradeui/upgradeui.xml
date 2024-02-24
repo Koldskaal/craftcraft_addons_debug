@@ -32,23 +32,13 @@
 			<Anchor point="TOP" relativeTo="$parent" y="-100" />
 		</Anchors>
 		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentIcon"
-					file="Interface\Icons\Spell_Nature_HealingWaveGreater">
-					<Size>
-						<AbsDimension x="32" y="32" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parent" x="10" />
-					</Anchors>
-				</Texture>
-			</Layer>
 			<Layer level="ARTWORK">
+
 				<FontString name="$parentTitle" inherits="GameFontNormal"
 					text="Section Title" justifyH="LEFT">
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentIcon" relativePoint="RIGHT"
-							x="5" />
+						<Anchor point="LEFT" relativeTo="$parent"
+							x="50" />
 					</Anchors>
 					<Size>
 						<AbsDimension x="200" y="32" />
@@ -74,7 +64,55 @@
 					</Layer>
 				</Layers>
 			</Button>
+			<Frame name="$parentIcon">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" x="10" />
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentTexture"
+							file="Interface\Icons\Spell_Nature_HealingWaveGreater">
+							<Size>
+								<AbsDimension x="32" y="32" />
+							</Size>
+							<!-- <Anchors>
+								<Anchor point="LEFT" relativeTo="$parent" x="10" />
+							</Anchors> -->
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<Texture name="$parentBorder" setAllPoints="true"
+							file="Interface\Buttons\UI-ActionButton-Border" alphaMode="ADD">
+							<Size>
+								<AbsDimension x="58" y="58" />
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativeTo="$parentTexture" x="1" />
+							</Anchors>
+							<Color r="1" g="1" b="1" a="1" />
+
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter>
+						if not self:GetParent().enchant then return end
+						GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
+						local link = CCREnchantFrame.link
+						GameTooltip:SetHyperlink("item:" .. string.match(link, "item:(%d+):") ..
+						":"..self:GetParent().enchant..":0:0:0:0:0:0");
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</Frame>
 		</Frames>
+
 	</Frame>
 	<Frame name="CCUpgradeTabFrame" enableMouse="false" toplevel="true" parent="ItemSocketingFrame"
 		frameStrata="HIGH">
