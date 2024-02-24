@@ -23,6 +23,59 @@
 			</OnClick>
 		</Scripts>
 	</Button>
+	<Frame name="CCREnchantSectionTemplate" movable="false" resizable="false" virtual="true"
+		inherits="OptionsBoxTemplate">
+		<Size>
+			<AbsDimension x="280" y="50" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOP" relativeTo="$parent" y="-100" />
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentIcon"
+					file="Interface\Icons\Spell_Nature_HealingWaveGreater">
+					<Size>
+						<AbsDimension x="32" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent" x="10" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentTitle" inherits="GameFontNormal"
+					text="Section Title" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentIcon" relativePoint="RIGHT"
+							x="5" />
+					</Anchors>
+					<Size>
+						<AbsDimension x="200" y="32" />
+					</Size>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentButton" inherits="UIPanelButtonTemplate">
+				<Size>
+					<AbsDimension x="60" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent" x="-10" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString inherits="GameFontNormal" text="Reroll">
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Button>
+		</Frames>
+	</Frame>
 	<Frame name="CCUpgradeTabFrame" enableMouse="false" toplevel="true" parent="ItemSocketingFrame"
 		frameStrata="HIGH">
 		<Size>
@@ -632,61 +685,23 @@
 					</Anchor>
 				</Anchors>
 			</Button>
-
-
-			<Frame name="$parentSection1" movable="false" resizable="false"
-				inherits="OptionsBoxTemplate">
-				<Size>
-					<AbsDimension x="280" y="50" />
-				</Size>
+			<Frame name="$parentSection1" inherits="CCREnchantSectionTemplate">
 				<Anchors>
-					<Anchor point="TOP" relativeTo="$parent" y="-100" />
+					<Anchor point="TOP" relativeTo="$parent" y="-100" x="-10" />
 				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentIcon"
-							file="Interface\Icons\Spell_Nature_HealingWaveGreater">
-							<Size>
-								<AbsDimension x="32" y="32" />
-							</Size>
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent" x="10" />
-							</Anchors>
-						</Texture>
-					</Layer>
-					<Layer level="ARTWORK">
-						<FontString name="$parentTitle" inherits="GameFontNormal"
-							text="Section Title" justifyH="LEFT">
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentIcon" relativePoint="RIGHT"
-									x="5" />
-							</Anchors>
-							<Size>
-								<AbsDimension x="200" y="32" />
-							</Size>
-						</FontString>
-					</Layer>
-				</Layers>
-				<Frames>
-					<Button name="$parentButton" inherits="UIPanelButtonTemplate">
-						<Size>
-							<AbsDimension x="60" y="20" />
-						</Size>
-						<Anchors>
-							<Anchor point="RIGHT" relativeTo="$parent" x="-10" />
-						</Anchors>
-						<Layers>
-							<Layer level="OVERLAY">
-								<FontString inherits="GameFontNormal" text="Reroll">
-									<Anchors>
-										<Anchor point="CENTER" />
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-					</Button>
-				</Frames>
 			</Frame>
+			<Frame name="$parentSection2" inherits="CCREnchantSectionTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentSection1" relativePoint="BOTTOM" y="-10" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parentSection3" inherits="CCREnchantSectionTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentSection2" relativePoint="BOTTOM" y="-10" />
+				</Anchors>
+			</Frame>
+
+
 		</Frames>
 	</Frame>
 
