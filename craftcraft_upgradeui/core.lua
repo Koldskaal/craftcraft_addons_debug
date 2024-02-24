@@ -218,7 +218,7 @@ function MainFrame:SetReagents()
     if not link then return end -- temporary
 
     local itemID = tonumber(string.match(link, "item:(%d+):"))
-    local _, _, q, ilvl = GetItemInfo(link)
+    local iname, _, q, ilvl = GetItemInfo(link)
     local invtype = select(9, GetItemInfo(link));
 
     local target_ilvl = ilvl
