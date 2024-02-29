@@ -110,6 +110,7 @@ function MainFrame:LoadStuff(resend)
             _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\inv_misc_gem_variety_01");
             _G[basestring].enchant = enchid;
             _G[basestring .. "TitleText"]:SetText(slot_to_name[socket] .. " Slot");
+            _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(6));
             _G["CCREnchantFrameSection" .. i .. "Button"]:Disable();
         else
             if enchid == 0 then
@@ -117,18 +118,21 @@ function MainFrame:LoadStuff(resend)
                 _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\inv_inscription_scroll");
                 _G[basestring].enchant = nil;
                 _G[basestring .. "TitleText"]:SetText("Empty");
+                _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0))
             else
                 local cache = ENCH_CACHE[enchid];
                 if not cache then
                     _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(0));
                     _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\inv_misc_questionmark");
                     _G[basestring .. "TitleText"]:SetText("Uknown Enchant");
+                    _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0));
                     _G[basestring].enchant = enchid;
                     should_request_cache = true;
                 else
                     _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(cache.rarity + 1));
                     _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\" .. cache.icon);
                     _G[basestring .. "TitleText"]:SetText(cache.name);
+                    _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(cache.rarity + 1));
                     _G[basestring].enchant = enchid;
                 end
             end

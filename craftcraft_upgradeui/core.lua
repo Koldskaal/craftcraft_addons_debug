@@ -206,7 +206,7 @@ function MainFrame:CreateUI()
         for i = 1, upgradeamount, 1 do
             ilvl, quality = NextItemUpgrade(ilvl, quality)
         end
-        CastItemUpgrade(itemSlot.bagID, itemSlot.slotID, ilvl, quality);
+        CastItemUpgrade(Addon.bagID, Addon.slotID, ilvl, quality);
     end)
     self.upgradeButton = upgradeButton
 
