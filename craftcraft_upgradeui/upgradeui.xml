@@ -33,8 +33,7 @@
 		</Anchors>
 		<Layers>
 			<Layer level="ARTWORK">
-
-				<FontString name="$parentTitle" inherits="GameFontNormal"
+				<FontString name="$parentTitleText" inherits="GameFontNormal"
 					text="Section Title" justifyH="LEFT">
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent"
@@ -47,7 +46,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Button name="$parentButton" inherits="UIPanelButtonTemplate">
+			<!-- <Button name="$parentButton" inherits="UIPanelButtonTemplate">
 				<Size>
 					<AbsDimension x="60" y="20" />
 				</Size>
@@ -63,7 +62,7 @@
 						</FontString>
 					</Layer>
 				</Layers>
-			</Button>
+			</Button> -->
 			<Frame name="$parentIcon">
 				<Size>
 					<AbsDimension x="32" y="32" />
@@ -102,8 +101,18 @@
 						if not self:GetParent().enchant then return end
 						GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT");
 						local link = CCREnchantFrame.link
+						local id = self:GetParent():GetID();
+						if id == 1 then
 						GameTooltip:SetHyperlink("item:" .. string.match(link, "item:(%d+):") ..
-						":"..self:GetParent().enchant..":0:0:0:0:0:0");
+						":0:"..self:GetParent().enchant..":0:0:0:0:0");
+						elseif id == 2 then
+						GameTooltip:SetHyperlink("item:" .. string.match(link, "item:(%d+):") ..
+						":0:0:"..self:GetParent().enchant..":0:0:0:0");
+						else
+						GameTooltip:SetHyperlink("item:" .. string.match(link, "item:(%d+):") ..
+						":0:0:0:"..self:GetParent().enchant..":0:0:0");
+						end
+
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave>
@@ -141,8 +150,7 @@
 					<OnClick>
 						PanelTemplates_SetTab(CCUpgradeTabFrame, 1);
 						PlaySound("igCharacterInfoTab");
-						CCUpgradeFrame:Hide();
-						CCREnchantFrame:Hide();
+						ChangeModifyTabs(1, true);
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -160,14 +168,13 @@
 					<OnClick>
 						PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
 						PlaySound("igCharacterInfoTab");
-						CCUpgradeFrame:Show();
-						CCREnchantFrame:Hide();
+						ChangeModifyTabs(2, true);
 					</OnClick>
 				</Scripts>
 			</Button>
 			<Button
 				name="CCUpgradeTabFrameTab3" inherits="CharacterFrameTabButtonTemplate" id="3"
-				text="Tempering">
+				text="Random Enchantment">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="CCUpgradeTabFrameTab2" relativePoint="RIGHT">
 						<Offset>
@@ -179,8 +186,7 @@
 					<OnClick>
 						PanelTemplates_SetTab(CCUpgradeTabFrame, 3);
 						PlaySound("igCharacterInfoTab");
-						CCREnchantFrame:Show();
-						CCUpgradeFrame:Hide();
+						ChangeModifyTabs(3, true);
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -703,7 +709,7 @@
 			</Layer>
 			<Layer level="OVERLAY">
 				<FontString name="$parentFrameTitleText" inherits="GameFontNormal"
-					text="Temper item">
+					text="Randomly Enchant Item">
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset>
@@ -776,17 +782,17 @@
 				<BarColor r="0.25" g="0.25" b="0.75" />
 			</StatusBar>
 
-			<Frame name="$parentSection1" inherits="CCREnchantSectionTemplate">
+			<Frame name="$parentSection1" inherits="CCREnchantSectionTemplate" id="1">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="$parent" y="-100" x="-10" />
 				</Anchors>
 			</Frame>
-			<Frame name="$parentSection2" inherits="CCREnchantSectionTemplate">
+			<Frame name="$parentSection2" inherits="CCREnchantSectionTemplate" id="2">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="$parentSection1" relativePoint="BOTTOM" y="-10" />
 				</Anchors>
 			</Frame>
-			<Frame name="$parentSection3" inherits="CCREnchantSectionTemplate">
+			<Frame name="$parentSection3" inherits="CCREnchantSectionTemplate" id="3">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="$parentSection2" relativePoint="BOTTOM" y="-10" />
 				</Anchors>

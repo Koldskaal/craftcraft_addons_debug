@@ -6,6 +6,8 @@ Addon.slotID = nil
 local shouldShow = false
 local MAX_REAGENT_NUM = 8
 local upgradeamount = 1
+local tempBagID, tempslotID = nil
+local last_tab = nil
 
 local function GetQualityString(quality)
     local qualityColor = ITEM_QUALITY_COLORS[quality or 1] -- Default to poor quality color if no quality specified
@@ -90,8 +92,8 @@ function MainFrame:CreateUI()
             end
             -- An item is being dragged onto the item slot
             -- print("Item dragged into the item slot:", info)
-            itemSlot.bagID = Addon.bagID
-            itemSlot.slotID = Addon.slotID
+            Addon.bagID = tempBagID
+            Addon.slotID = tempslotID
             itemSlot.link = info
             -- print(itemSlot.link)
             -- print(itemSlot.bagID, itemSlot.slotID)
@@ -118,10 +120,11 @@ function MainFrame:CreateUI()
 
     function itemSlot:RefreshItem(force)
         local info;
-        if (itemSlot.bagID == 255) then
-            info = GetInventoryItemLink("player", itemSlot.slotID)
+        if not Addon.bagID or not Addon.slotID then return end
+        if (Addon.bagID == 255) then
+            info = GetInventoryItemLink("player", Addon.slotID)
         else
-            info = GetContainerItemLink(itemSlot.bagID, itemSlot.slotID)
+            info = GetContainerItemLink(Addon.bagID, Addon.slotID)
         end
 
 
@@ -332,23 +335,23 @@ end
 
 function HooksSetup()
     hooksecurefunc('ContainerFrameItemButton_OnClick', function(frame)
-        Addon.bagID = frame:GetParent():GetID()
-        Addon.slotID = frame:GetID()
+        tempBagID = frame:GetParent():GetID()
+        tempslotID = frame:GetID()
     end)
 
     hooksecurefunc('ContainerFrameItemButton_OnDrag', function(frame)
-        Addon.bagID = frame:GetParent():GetID()
-        Addon.slotID = frame:GetID()
+        tempBagID = frame:GetParent():GetID()
+        tempslotID = frame:GetID()
     end)
 
     hooksecurefunc('PaperDollItemSlotButton_OnClick', function(frame)
-        Addon.bagID = 255
-        Addon.slotID = frame:GetID()
+        tempBagID = 255
+        tempslotID = frame:GetID()
     end)
     ITEM_SOCKETABLE = ""
     GameTooltip:HookScript("OnTooltipSetItem", function(self)
         if not shouldShow then return end
-        local name, link = self:GetItem()
+        local _, link = self:GetItem()
         local _, _, _, _, _, itemType = GetItemInfo(link)
 
         if (itemType == "Armor" or itemType == "Weapon") then
@@ -360,6 +363,8 @@ function HooksSetup()
     local old_ContainerFrameItemButton_OnModifiedClick = ContainerFrameItemButton_OnModifiedClick
     function ContainerFrameItemButton_OnModifiedClick(frame, button)
         if IsShiftKeyDown() and button == "RightButton" then
+            tempBagID = frame:GetParent():GetID()
+            tempslotID = frame:GetID()
             Addon.bagID = frame:GetParent():GetID()
             Addon.slotID = frame:GetID()
             if (not GetContainerItemInfo(Addon.bagID, Addon.slotID)) then return end
@@ -373,6 +378,9 @@ function HooksSetup()
             SocketContainerItem(Addon.bagID, Addon.slotID);
             if not GetSocketItemInfo() then
                 PanelTemplates_DisableTab(CCUpgradeTabFrame, 1)
+                if last_tab == 1 then
+                    last_tab = 2
+                end
             else
                 PanelTemplates_EnableTab(CCUpgradeTabFrame, 1)
             end
@@ -383,13 +391,17 @@ function HooksSetup()
             end
 
             PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
-            MainFrame:Show()
+            ChangeModifyTabs(2);
             upgradeamount = 1;
             PickupContainerItem(Addon.bagID, Addon.slotID);
 
             MainFrame.itemSlot:Click("LeftButton");
             SocketContainerItem(Addon.bagID, Addon.slotID);
             UpdageUpgradeAmount();
+
+            -- finally open right tab
+            PanelTemplates_SetTab(CCUpgradeTabFrame, last_tab);
+            ChangeModifyTabs(last_tab);
             return
         end
         old_ContainerFrameItemButton_OnModifiedClick(frame, button)
@@ -398,6 +410,8 @@ function HooksSetup()
     local old_PaperDollItemSlotButton_OnModifiedClick = PaperDollItemSlotButton_OnModifiedClick
     function PaperDollItemSlotButton_OnModifiedClick(frame, button)
         if IsShiftKeyDown() and button == "RightButton" then
+            tempBagID = 255
+            tempslotID = frame:GetID()
             Addon.bagID = 255
             Addon.slotID = frame:GetID()
             if (not GetInventoryItemID("player", Addon.slotID)) then return end
@@ -408,6 +422,9 @@ function HooksSetup()
             SocketInventoryItem(frame:GetID());
             if not GetSocketItemInfo() then
                 PanelTemplates_DisableTab(CCUpgradeTabFrame, 1)
+                if last_tab == 1 then
+                    last_tab = 2
+                end
             else
                 PanelTemplates_EnableTab(CCUpgradeTabFrame, 1)
             end
@@ -418,7 +435,7 @@ function HooksSetup()
             end
 
             PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
-            MainFrame:Show()
+            ChangeModifyTabs(2);
             upgradeamount = 1;
 
             PickupInventoryItem(frame:GetID());
@@ -426,6 +443,10 @@ function HooksSetup()
             MainFrame.itemSlot:Click("LeftButton");
             SocketInventoryItem(frame:GetID());
             UpdageUpgradeAmount();
+
+            -- finally open right tab
+            PanelTemplates_SetTab(CCUpgradeTabFrame, last_tab);
+            ChangeModifyTabs(last_tab);
             return
         end
 
@@ -530,6 +551,26 @@ function UpdageUpgradeAmount()
     end
 
     MainFrame.upgradeAmountLabel:SetText(upgradeamount)
+end
+
+function ChangeModifyTabs(index, save)
+    if index == 1 then --socket tab
+        CCUpgradeFrame:Hide()
+        CCREnchantFrame:Hide()
+    elseif index == 2 then --temper tab
+        CCUpgradeFrame:Show()
+        CCREnchantFrame:Hide()
+    elseif index == 3 then --random enchant tab
+        CCUpgradeFrame:Hide()
+        CCREnchantFrame:Show()
+    else
+        CCUpgradeFrame:Show()
+        CCREnchantFrame:Hide()
+    end
+
+    if save then
+        last_tab = index;
+    end
 end
 
 MainFrame:CreateUI()
