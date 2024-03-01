@@ -17,6 +17,25 @@ local slot_to_name = {
     ["Socket"] = "Prismatic socket",
 }
 
+local quality_to_name = {
+    [1] = ITEM_QUALITY_COLORS[1].hex .. "Common|r",
+    [2] = ITEM_QUALITY_COLORS[2].hex .. "Uncommon|r",
+    [3] = ITEM_QUALITY_COLORS[3].hex .. "Rare|r",
+    [4] = ITEM_QUALITY_COLORS[4].hex .. "Epic|r",
+    [5] = ITEM_QUALITY_COLORS[5].hex .. "Legendary|r",
+}
+
+function SetDesaturation(texture, desaturation)
+    local shaderSupported = texture:SetDesaturated(desaturation);
+    if (not shaderSupported) then
+        if (desaturation) then
+            texture:SetVertexColor(0.5, 0.5, 0.5);
+        else
+            texture:SetVertexColor(1.0, 1.0, 1.0);
+        end
+    end
+end
+
 local function getRateBracket(itemlvl)
     if itemlvl < 25 then
         return 1
@@ -99,6 +118,7 @@ function MainFrame:LoadStuff(resend)
         "item:(%d+):(%d+):(%d+):(%d+):(%d+)")
 
     local should_request_cache = false
+    local quality, _ = select(3, GetItemInfo(MainFrame.link));
 
     -- play here
     for i = 1, 3, 1 do
@@ -113,30 +133,42 @@ function MainFrame:LoadStuff(resend)
             _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(6));
             _G["CCREnchantFrameSection" .. i .. "Button"]:Disable();
         else
-            if enchid == 0 then
+            if quality > i then
+                _G["CCREnchantFrameSection" .. i .. "Button"]:Enable();
+                SetDesaturation(_G[basestring .. "IconTexture"], false);
+                if enchid == 0 then
+                    _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(0));
+                    _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\inv_inscription_scroll");
+                    _G[basestring].enchant = nil;
+                    _G[basestring .. "TitleText"]:SetText("Empty");
+                    _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0))
+                else
+                    local cache = ENCH_CACHE[enchid];
+                    if not cache then
+                        _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(0));
+                        _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\inv_misc_questionmark");
+                        _G[basestring .. "TitleText"]:SetText("Uknown Enchant");
+                        _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0));
+                        _G[basestring].enchant = enchid;
+                        should_request_cache = true;
+                    else
+                        _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(cache.rarity + 1));
+                        _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\" .. cache.icon);
+                        _G[basestring .. "TitleText"]:SetText(cache.name);
+                        _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(cache.rarity + 1));
+                        _G[basestring].enchant = enchid;
+                    end
+                end
+            else
+                _G["CCREnchantFrameSection" .. i .. "Button"]:Disable();
+                SetDesaturation(_G[basestring .. "IconTexture"], true);
+
                 _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(0));
                 _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\inv_inscription_scroll");
                 _G[basestring].enchant = nil;
-                _G[basestring .. "TitleText"]:SetText("Empty");
-                _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0))
-            else
-                local cache = ENCH_CACHE[enchid];
-                if not cache then
-                    _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(0));
-                    _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\inv_misc_questionmark");
-                    _G[basestring .. "TitleText"]:SetText("Uknown Enchant");
-                    _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0));
-                    _G[basestring].enchant = enchid;
-                    should_request_cache = true;
-                else
-                    _G[basestring .. "IconBorder"]:SetVertexColor(GetItemQualityColor(cache.rarity + 1));
-                    _G[basestring .. "IconTexture"]:SetTexture("Interface\\Icons\\" .. cache.icon);
-                    _G[basestring .. "TitleText"]:SetText(cache.name);
-                    _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(cache.rarity + 1));
-                    _G[basestring].enchant = enchid;
-                end
+                _G[basestring .. "TitleText"]:SetText("Unlocked at " .. quality_to_name[i + 1]);
+                _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0));
             end
-            _G["CCREnchantFrameSection" .. i .. "Button"]:Enable();
         end
     end
 
