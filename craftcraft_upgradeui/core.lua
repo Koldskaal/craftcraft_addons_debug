@@ -16,6 +16,14 @@ local function GetQualityString(quality)
     return qualityColor.hex .. qualityName .. "|r"
 end
 
+function Addon.GetDurability()
+    if Addon.bagID == 255 then
+        return GetInventoryItemDurability(Addon.slotID);
+    else
+        return GetContainerItemDurability(Addon.bagID, Addon.slotID);
+    end
+end
+
 function MainFrame:CreateUI()
     -- Create the main frame
     self:SetPoint("TOP", ItemSocketingFrame)
@@ -334,25 +342,26 @@ function MainFrame:DisplayItemProperties()
 end
 
 function HooksSetup()
-    hooksecurefunc('ContainerFrameItemButton_OnClick', function(frame)
-        tempBagID = frame:GetParent():GetID()
-        tempslotID = frame:GetID()
-    end)
+    -- hooksecurefunc('ContainerFrameItemButton_OnClick', function(frame)
+    --     tempBagID = frame:GetParent():GetID()
+    --     tempslotID = frame:GetID()
+    -- end)
 
-    hooksecurefunc('ContainerFrameItemButton_OnDrag', function(frame)
-        tempBagID = frame:GetParent():GetID()
-        tempslotID = frame:GetID()
-    end)
+    -- hooksecurefunc('ContainerFrameItemButton_OnDrag', function(frame)
+    --     tempBagID = frame:GetParent():GetID()
+    --     tempslotID = frame:GetID()
+    -- end)
 
-    hooksecurefunc('PaperDollItemSlotButton_OnClick', function(frame)
-        tempBagID = 255
-        tempslotID = frame:GetID()
-    end)
+    -- hooksecurefunc('PaperDollItemSlotButton_OnClick', function(frame)
+    --     tempBagID = 255
+    --     tempslotID = frame:GetID()
+    -- end)
     ITEM_SOCKETABLE = ""
     GameTooltip:HookScript("OnTooltipSetItem", function(self)
         if not shouldShow then return end
         local _, link = self:GetItem()
         local _, _, _, _, _, itemType = GetItemInfo(link)
+
 
         if (itemType == "Armor" or itemType == "Weapon") then
             self:AddLine(GREEN_FONT_COLOR_CODE .. "<Shift Right Click to Modify>")

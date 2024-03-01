@@ -36,6 +36,19 @@ function SetDesaturation(texture, desaturation)
     end
 end
 
+local scanTool = CreateFrame("GameTooltip", "MyScanningTooltip", nil, "GameTooltipTemplate"); -- Tooltip name cannot be nil
+MyScanningTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
+
+local function getRepairCost()
+    if Addon.bagID == 255 then
+        -- print(MyScanningTooltip:SetInventoryItem("player", Addon.slotID))
+        return select(3, scanTool:SetInventoryItem("player", Addon.slotID))
+    else
+        -- print(scanTool:SetInventoryItem(Addon.bagID, Addon.slotID))
+        return select(2, scanTool:SetBagItem(Addon.bagID, Addon.slotID));
+    end
+end
+
 local function getRateBracket(itemlvl)
     if itemlvl < 25 then
         return 1
@@ -60,16 +73,8 @@ local function GetLink()
     end
 end
 
-local function GetDurability()
-    if Addon.bagID == 255 then
-        return GetInventoryItemDurability(Addon.slotID);
-    else
-        return GetContainerItemDurability(Addon.bagID, Addon.slotID);
-    end
-end
-
 local function UpdateDurabilityProgressBar(progressBarFrame, textFrame)
-    local currentDurability, maxDurability = GetDurability();
+    local currentDurability, maxDurability = Addon.GetDurability();
     if not currentDurability or not maxDurability then
         -- Hide the progress bar if there's no durability (for non-equipable items)
         progressBarFrame:Hide()
@@ -89,9 +94,12 @@ local function UpdateDurabilityProgressBar(progressBarFrame, textFrame)
         --     progressBarFrame:SetStatusBarColor(1, 0.5, 0) -- Orange for medium durability
         -- else
         --     progressBarFrame:SetStatusBarColor(0, 1, 0)   -- Green for high durability
+    else
+        progressBarFrame:SetStatusBarColor(0.25, 0.25, 0.75)
     end
 
     progressBarFrame:Show()
+    return currentDurability;
 end
 
 CCREnchantFrameCloseButton:SetScript("OnClick", function() HideUIPanel(ItemSocketingFrame); end)
@@ -109,7 +117,7 @@ function MainFrame:LoadStuff(resend)
     MainFrame.link = GetLink();
     if (not MainFrame.link) then
         print(Addon.bagID, Addon.slotID)
-        print(GetLink())
+        -- print(GetLink())
         return
     end
 
@@ -119,7 +127,8 @@ function MainFrame:LoadStuff(resend)
 
     local should_request_cache = false
     local quality, _ = select(3, GetItemInfo(MainFrame.link));
-
+    local durability = UpdateDurabilityProgressBar(CCREnchantFrameDurability, CCREnchantFrameDurabilityText)
+    if not durability then quality = 0 end
     -- play here
     for i = 1, 3, 1 do
         local basestring = "CCREnchantFrameSection" .. i;
@@ -170,13 +179,20 @@ function MainFrame:LoadStuff(resend)
                 _G[basestring .. "TitleText"]:SetTextColor(GetItemQualityColor(0));
             end
         end
+
+        if not durability or durability <= 1 then
+            _G["CCREnchantFrameSection" .. i .. "Button"]:Disable();
+        end
     end
+
+
+
 
     if resend and should_request_cache then
         RequestEnchantInfo(Addon.bagID, Addon.slotID);
     end
 
-    UpdateDurabilityProgressBar(CCREnchantFrameDurability, CCREnchantFrameDurabilityText)
+
     local ilvl, _ = select(4, GetItemInfo(MainFrame.link))
     local brackidx = getRateBracket(ilvl)
     for i = 1, 5, 1 do
@@ -242,5 +258,14 @@ function MainFrame.OnUpdate(self, elapsed)
         self.TimeSinceLastUpdate = 0;
     end
 end
+
+-- quick and dirty
+local repairButton = Addon.GenericCreateButton("SelfRepairbutton", MainFrame, 162, 22, "GameFontNormal",
+    "Repair", "CENTER", nil, 1)
+repairButton:SetSize(80, 22)
+repairButton:SetPoint("BOTTOM", -10, 200)
+repairButton:SetScript("OnClick", function()
+    SelfRepair(Addon.bagID, Addon.slotID);
+end)
 
 MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
