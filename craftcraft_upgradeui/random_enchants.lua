@@ -219,7 +219,7 @@ for i = 1, 3, 1 do
 
     _G[basestring .. "TitleText"]:SetText("Empty");
     local button = Addon.GenericCreateButton(basestring .. "Button", _G[basestring], 20, 60, "GameFontNormal",
-        "Reroll", "CENTER", nil, 1)
+        "Roll", "CENTER", nil, 1)
     button:SetPoint("RIGHT", _G[basestring], "RIGHT", -10, 0)
     button:Disable()
 
