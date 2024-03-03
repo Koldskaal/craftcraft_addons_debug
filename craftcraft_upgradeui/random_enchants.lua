@@ -74,7 +74,7 @@ local function GetLink()
 end
 
 local function UpdateDurabilityProgressBar(progressBarFrame, textFrame)
-    local currentDurability, maxDurability = Addon.GetDurability();
+    local currentDurability, maxDurability = Addon.GetDurability(Addon.bagID, Addon.slotID);
     if not currentDurability or not maxDurability then
         -- Hide the progress bar if there's no durability (for non-equipable items)
         progressBarFrame:Hide()
@@ -83,6 +83,14 @@ local function UpdateDurabilityProgressBar(progressBarFrame, textFrame)
 
     local durabilityPercentage = (currentDurability / maxDurability) * 100
     progressBarFrame:SetValue(durabilityPercentage)
+
+    if currentDurability == maxDurability then
+        SetDesaturation(_G["SelfRepairbuttonTexture"], true);
+        _G["SelfRepairbutton"]:Disable()
+    else
+        SetDesaturation(_G["SelfRepairbuttonTexture"], false);
+        _G["SelfRepairbutton"]:Enable()
+    end
 
     if (textFrame) then
         textFrame:SetText(currentDurability .. "/" .. maxDurability);
@@ -99,7 +107,7 @@ local function UpdateDurabilityProgressBar(progressBarFrame, textFrame)
     end
 
     progressBarFrame:Show()
-    return currentDurability;
+    return currentDurability, maxDurability;
 end
 
 CCREnchantFrameCloseButton:SetScript("OnClick", function() HideUIPanel(ItemSocketingFrame); end)
@@ -126,8 +134,9 @@ function MainFrame:LoadStuff(resend)
         "item:(%d+):(%d+):(%d+):(%d+):(%d+)")
 
     local should_request_cache = false
-    local quality, _ = select(3, GetItemInfo(MainFrame.link));
-    local durability = UpdateDurabilityProgressBar(CCREnchantFrameDurability, CCREnchantFrameDurabilityText)
+    local quality, ilvl, _ = select(3, GetItemInfo(MainFrame.link));
+    local durability, maxdurability = UpdateDurabilityProgressBar(CCREnchantFrameDurability,
+        CCREnchantFrameDurabilityText)
     if not durability then quality = 0 end
     -- play here
     for i = 1, 3, 1 do
@@ -185,7 +194,7 @@ function MainFrame:LoadStuff(resend)
         end
     end
 
-
+    MoneyFrame_Update("RepairMoneyFrame", maxdurability * ilvl * 2);
 
 
     if resend and should_request_cache then
@@ -260,12 +269,35 @@ function MainFrame.OnUpdate(self, elapsed)
 end
 
 -- quick and dirty
-local repairButton = Addon.GenericCreateButton("SelfRepairbutton", MainFrame, 162, 22, "GameFontNormal",
-    "Repair", "CENTER", nil, 1)
-repairButton:SetSize(80, 22)
-repairButton:SetPoint("BOTTOM", -10, 200)
+-- local repairButton = Addon.GenericCreateButton("SelfRepairbutton", MainFrame, 162, 22, "GameFontNormal",
+--     "Repair", "CENTER", nil, 1)
+local repairButton = CreateFrame("Button", "SelfRepairbutton", MainFrame)
+repairButton:SetSize(36, 36)
+repairButton:SetPoint("TOPRIGHT", MainFrame, "TOPRIGHT", -80, -294)
+local repairIcon = repairButton:CreateTexture("SelfRepairbuttonTexture", 'BACKGROUND')
+repairIcon:SetAllPoints()
+repairIcon:SetTexture([[Interface\MerchantFrame\UI-Merchant-RepairIcons]])
+repairIcon:SetTexCoord(0, 0.28125, 0, 0.5625)
+repairButton:SetPushedTexture([[Interface\Buttons\UI-Quickslot-Depress]])
+repairButton:SetHighlightTexture([[Interface\Buttons\ButtonHilight-Square]], "ADD")
+-- <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+-- 				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+
+repairButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetText(REPAIR_AN_ITEM);
+end)
+repairButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+end)
 repairButton:SetScript("OnClick", function()
     SelfRepair(Addon.bagID, Addon.slotID);
 end)
+
+
+local moneyFrame = CreateFrame('Frame', "RepairMoneyFrame", MainFrame, "SmallMoneyFrameTemplate");
+moneyFrame:SetPoint("RIGHT", repairButton, "LEFT", 10, 0)
+SmallMoneyFrame_OnLoad(moneyFrame);
+MoneyFrame_SetType(moneyFrame, "STATIC");
 
 MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)

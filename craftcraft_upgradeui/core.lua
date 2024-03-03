@@ -6,7 +6,7 @@ Addon.slotID = nil
 local shouldShow = false
 local MAX_REAGENT_NUM = 8
 local upgradeamount = 1
-local tempBagID, tempslotID = nil
+local tempBagID, tempslotID = nil, nil
 local last_tab = nil
 
 local function GetQualityString(quality)
@@ -16,11 +16,11 @@ local function GetQualityString(quality)
     return qualityColor.hex .. qualityName .. "|r"
 end
 
-function Addon.GetDurability()
-    if Addon.bagID == 255 then
-        return GetInventoryItemDurability(Addon.slotID);
+function Addon.GetDurability(bagID, slotID)
+    if bagID == 255 then
+        return GetInventoryItemDurability(slotID);
     else
-        return GetContainerItemDurability(Addon.bagID, Addon.slotID);
+        return GetContainerItemDurability(bagID, slotID);
     end
 end
 
@@ -374,17 +374,21 @@ function HooksSetup()
         if IsShiftKeyDown() and button == "RightButton" then
             tempBagID = frame:GetParent():GetID()
             tempslotID = frame:GetID()
-            Addon.bagID = frame:GetParent():GetID()
-            Addon.slotID = frame:GetID()
-            if (not GetContainerItemInfo(Addon.bagID, Addon.slotID)) then return end
-            local _, _, _, _, _, itemType = GetItemInfo(select(7, GetContainerItemInfo(Addon.bagID, Addon.slotID)))
+
+            if (not GetContainerItemInfo(tempBagID, tempslotID)) then
+                return
+            end
+            if not Addon.GetDurability(tempBagID, tempslotID) then
+                return
+            end
+            local _, _, _, _, _, itemType = GetItemInfo(select(7, GetContainerItemInfo(tempBagID, tempslotID)))
             if (not (itemType == "Armor" or itemType == "Weapon")) then
                 return
             end
             CloseSocketInfo()
             ItemSocketingFrame_Update();
 
-            SocketContainerItem(Addon.bagID, Addon.slotID);
+            SocketContainerItem(tempBagID, tempslotID);
             if not GetSocketItemInfo() then
                 PanelTemplates_DisableTab(CCUpgradeTabFrame, 1)
                 if last_tab == 1 then
@@ -402,10 +406,10 @@ function HooksSetup()
             PanelTemplates_SetTab(CCUpgradeTabFrame, 2);
             ChangeModifyTabs(2);
             upgradeamount = 1;
-            PickupContainerItem(Addon.bagID, Addon.slotID);
+            PickupContainerItem(tempBagID, tempslotID);
 
             MainFrame.itemSlot:Click("LeftButton");
-            SocketContainerItem(Addon.bagID, Addon.slotID);
+            SocketContainerItem(tempBagID, tempslotID);
             UpdageUpgradeAmount();
 
             -- finally open right tab
@@ -421,10 +425,12 @@ function HooksSetup()
         if IsShiftKeyDown() and button == "RightButton" then
             tempBagID = 255
             tempslotID = frame:GetID()
-            Addon.bagID = 255
-            Addon.slotID = frame:GetID()
-            if (not GetInventoryItemID("player", Addon.slotID)) then return end
-
+            if (not GetInventoryItemID("player", tempslotID)) then
+                return
+            end
+            if not Addon.GetDurability(tempBagID, tempslotID) then
+                return
+            end
             CloseSocketInfo()
             ItemSocketingFrame_Update();
 
