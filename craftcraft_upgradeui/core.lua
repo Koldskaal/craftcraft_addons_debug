@@ -359,6 +359,7 @@ function HooksSetup()
     ITEM_SOCKETABLE = ""
     GameTooltip:HookScript("OnTooltipSetItem", function(self)
         if not shouldShow then return end
+        if not Addon.GetDurability(tempBagID, tempslotID) then return end;
         local _, link = self:GetItem()
         local _, _, _, _, _, itemType = GetItemInfo(link)
 
@@ -472,18 +473,24 @@ function HooksSetup()
     local old_ContainerFrameItemButton_OnEnter = ContainerFrameItemButton_OnEnter
     function ContainerFrameItemButton_OnEnter(self)
         shouldShow = true
+        tempBagID = self:GetParent():GetID()
+        tempslotID = self:GetID()
         old_ContainerFrameItemButton_OnEnter(self)
     end
 
     local old_PaperDollItemSlotButton_OnEnter = PaperDollItemSlotButton_OnEnter
     function PaperDollItemSlotButton_OnEnter(self)
         shouldShow = true
+        tempBagID = 255
+        tempslotID = self:GetID()
         old_PaperDollItemSlotButton_OnEnter(self)
     end
 
     local originalHideFunc = GameTooltip.Hide
     GameTooltip.Hide = function(self)
         shouldShow = false
+        tempBagID = nil
+        tempslotID = nil
         originalHideFunc(self)
     end
 
